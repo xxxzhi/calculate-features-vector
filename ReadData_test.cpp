@@ -54,13 +54,13 @@ int main(){
 			break;
 		}
 		for(size_t i = 0 ; i != record.data.size() ; ++ i){
-			features_ofstream << record.data[i] ;
+			features_ofstream << record.data[i]  << "\t" ;
 		}
 		features_ofstream << endl;
 
 		//全部特征 包含sma 之类的
 		for(size_t i = 0 ; i != record.features_vector.size() ; ++ i){
-			features_all_ofstream << record.features_vector[i] ;
+			features_all_ofstream << record.features_vector[i] << "\t" ;
 		}
 		features_all_ofstream << endl;
 		if(record.activity == "walking"){
