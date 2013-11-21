@@ -13,6 +13,25 @@ DataSetOperate::DataSetOperate() {
 }
 
 
+double DataSetOperate::CalculateSMA(){
+	double sma = 0;
+	int n = slideWindow.size();
+	DataRecord record;
+	//遍历一遍
+	for(int i=0;i != n;++i){
+		record = slideWindow.front();
+		for(unsigned int j = 0; j != record.data.size(); ++ j){
+			sma +=fabs(record.data[j]);
+		}
+		slideWindow.pop();
+		slideWindow.push(record);
+	}
+
+	sma /=n;
+
+	return sma;
+}
+
 DataSetOperate::DataSetOperate(char*datafilename,int N){
 	slideWindowSize = N;
 	infile.open(datafilename,ios::in);
@@ -36,7 +55,7 @@ DataSetOperate::DataSetOperate(char*datafilename,int N){
  *
  *从文件中读取一条数据
  */
-DataRecord DataSetOperate::readRecordFromFile(){
+DataRecord DataSetOperate::ReadRecordFromFile(){
 	DataRecord record;
 	if(!infile.is_open()){
 		record.is_empty = true;
@@ -49,47 +68,47 @@ DataRecord DataSetOperate::readRecordFromFile(){
 		infile.close();
 		return record;
 	}
+	do{
+		string str_record;
+		getline(infile,str_record);
 
-	string str_record;
-	getline(infile,str_record);
+		//替换逗号
+		for(int i=0;i != str_record.size() ; ++i){
 
-	//替换逗号
-	for(int i=0;i != str_record.size() ; ++i){
+			//时间输入
+			if(str_record[i] ==' '){
+				str_record[i] = '-';
+			}
 
-		//时间输入
-		if(str_record[i] ==' '){
-			str_record[i] = '-';
+			if(str_record[i] == ','){
+				str_record[i] =' ';
+			}
+
 		}
 
-		if(str_record[i] == ','){
-			str_record[i] =' ';
+		istringstream istring_record(str_record);
+
+		istring_record >>record.sequence_name >> record.tag_identificator
+				>> record.timestamp >> record.date;
+
+		for(int i=0; i !=record.dimens ; ++i ){
+			double atemp=0;
+			istring_record >>atemp;
+			record.data.push_back(atemp);
 		}
 
-	}
-
-	istringstream istring_record(str_record);
-
-	istring_record >>record.sequence_name >> record.tag_identificator
-			>> record.timestamp >> record.date;
-
-	for(int i=0; i !=record.dimens ; ++i ){
-		double atemp=0;
-		istring_record >>atemp;
-		record.data.push_back(atemp);
-	}
-
-	istring_record >> record.activity;
-
+		istring_record >> record.activity;
+	}while(!RestrainOk(record));
 	return record;
 }
 
 /*
  * 读取下一条
  */
-DataRecord DataSetOperate::readNext(){
+DataRecord DataSetOperate::ReadNext(){
 	DataRecord record_return;
 
-	record_return = readRecordFromFile();
+	record_return = ReadRecordFromFile();
 
 	//是否为空 表示已经到了文件尾部
 	if(record_return.is_empty ){
@@ -117,7 +136,7 @@ DataRecord DataSetOperate::readNext(){
 
 	//计算sma smv
 	record_return.smv = calculateSMV(record_return);
-	record_return.sma = calculateSMA();
+	record_return.sma = CalculateSMA();
 
 	record_return.genearateFeaturesVector();
 	return record_return;

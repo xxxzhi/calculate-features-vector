@@ -27,6 +27,15 @@ using std::istringstream;
 
 class DataSetOperate {
 private:
+
+	//sequence name 的限制  是包含限制
+	string select_contain_sequence;
+
+	//tag identifitor 的限制
+	string select_tag_identificator;
+
+
+
 	unsigned int slideWindowSize = 10;
 		//文件读取 滑动窗口
 	queue<DataRecord> slideWindow;
@@ -35,11 +44,18 @@ private:
 	ifstream infile;
 
 	double calculateSMV(DataRecord& record);
-	double calculateSMA();
+	double CalculateSMA();
 
-	DataRecord readRecordFromFile();
+	DataRecord ReadRecordFromFile();
+
+	bool RestrainSequenceName(const DataRecord& record);
+
+	bool RestrainTagIdentificator(const DataRecord& record);
+
+
+	bool RestrainOk(const DataRecord & record);
 public:
-	DataRecord readNext();
+	DataRecord ReadNext();
 
 	/*
 	 * N 表示 滑动窗口的大小
@@ -47,6 +63,22 @@ public:
 	DataSetOperate(char* datafilename,int N);
 	DataSetOperate();
 	virtual ~DataSetOperate();
+
+	const string& GetSelectContainSequence() const {
+		return select_contain_sequence;
+	}
+
+	void SetSelectContainSequence(const string& selectContainSequence) {
+		select_contain_sequence = selectContainSequence;
+	}
+
+	const string& GetSelectTagIdentificator() const {
+		return select_tag_identificator;
+	}
+
+	void SetSelectTagIdentificator(const string& selectTagIdentificator) {
+		select_tag_identificator = selectTagIdentificator;
+	}
 };
 
 
@@ -60,23 +92,26 @@ inline double DataSetOperate::calculateSMV(DataRecord& record){
 	return smv;
 }
 
-inline double DataSetOperate::calculateSMA(){
-	double sma = 0;
-	int n = slideWindow.size();
-	DataRecord record;
-	//遍历一遍
-	for(int i=0;i != n;++i){
-		record = slideWindow.front();
-		for(unsigned int j = 0; j != record.data.size(); ++ j){
-			sma +=fabs(record.data[j]);
-		}
-		slideWindow.pop();
-		slideWindow.push(record);
+inline bool DataSetOperate::RestrainTagIdentificator(const DataRecord& record){
+	if(select_tag_identificator.length() <= 0){
+		return true;
+	}else{
+		return record.tag_identificator.find(select_tag_identificator) >=0;
 	}
+}
 
-	sma /=n;
 
-	return sma;
+inline bool DataSetOperate::RestrainSequenceName(const DataRecord& record){
+	if(select_contain_sequence.length() <= 0){
+		return true;
+	}else{
+		return record.sequence_name.find(select_contain_sequence) >=0;
+	}
+}
+
+
+inline bool DataSetOperate::RestrainOk(const DataRecord& record){
+	return RestrainSequenceName(record)&&RestrainTagIdentificator(record);
 }
 
 #endif /* READDATA_H_ */
