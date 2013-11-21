@@ -91,7 +91,7 @@ DataRecord DataSetOperate::ReadRecordFromFile(){
 
 		istring_record >>record.sequence_name >> record.tag_identificator
 				>> record.timestamp >> record.date;
-
+		record.data.clear();
 		for(int i=0; i !=record.dimens ; ++i ){
 			double atemp=0;
 			istring_record >>atemp;

@@ -90,6 +90,8 @@ int main(){
 			features_all_ofstream << record.features_vector[i] << "\t" ; ;
 		}
 		features_all_ofstream << endl;
+
+
 		if(record.activity == "walking"){
 			activity_ofstream <<1<< endl;
 		}else if (record.activity == "falling"){
