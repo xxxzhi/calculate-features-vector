@@ -96,7 +96,11 @@ inline bool DataSetOperate::RestrainTagIdentificator(const DataRecord& record){
 	if(select_tag_identificator.length() <= 0){
 		return true;
 	}else{
-		return record.tag_identificator.find(select_tag_identificator) >=0;
+		string::size_type pos = record.tag_identificator.find(select_tag_identificator);
+		if(pos != string::npos)
+			return true;
+		else
+			return false;
 	}
 }
 
@@ -105,7 +109,11 @@ inline bool DataSetOperate::RestrainSequenceName(const DataRecord& record){
 	if(select_contain_sequence.length() <= 0){
 		return true;
 	}else{
-		return record.sequence_name.find(select_contain_sequence) >=0;
+		string::size_type pos = record.sequence_name.find(select_contain_sequence);
+		if(pos != string::npos)
+			return true;
+		else
+			return false;
 	}
 }
 

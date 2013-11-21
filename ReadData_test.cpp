@@ -15,13 +15,15 @@ int main(){
 	cout<<"hello"<<endl;
 
 	const string select_sequence = "A01";
-	const string sign_split = "-";
+	const string sign_split = "_";
 	const string select_tag = "010-000-024-033";
-	const string root = "I:\\Dropbox\\摔倒\\数据集\\Localization Data for Person Activity\\";
+	const string root_root = "I:\\Dropbox\\摔倒\\数据集\\Localization Data for Person Activity\\";
+	string temp = "trains\\";
+	string root = root_root+temp;
 	DataSetOperate dataSet_opeate("I:\\Dropbox\\摔倒\\数据集\\Localization Data for Person Activity\\ConfLongDemo_JSI.txt",20);
 
-	dataSet_opeate.SetSelectContainSequence("A01");
-	dataSet_opeate.SetSelectTagIdentificator("010-000-024-033");
+	dataSet_opeate.SetSelectContainSequence(select_sequence);
+	dataSet_opeate.SetSelectTagIdentificator(select_tag);
 
 	//features vector  array
 	vector< vector<double> > features_vecotr_arr ;
@@ -45,22 +47,47 @@ int main(){
 			(root+file_name_features_vector+sign_split
 					+select_sequence+sign_split
 					+select_tag+suffix).c_str(),ios::out);
+	int counts = 0;
 
 	do{
 		DataRecord record = dataSet_opeate.ReadNext();
-
+		counts ++ ;
 		if(record.is_empty){
 			// 到了末尾
 			break;
 		}
+
+		if(counts == 502 ){
+			features_ofstream.close();
+			activity_ofstream.close();
+			features_all_ofstream.close();
+			temp = "test\\";
+			root = root_root + temp;
+			file_name_features_vector = "features_vector";
+			 features_ofstream.open(
+					(root+file_name_features_vector+sign_split
+							+select_sequence +sign_split +select_tag+suffix).c_str(),ios::out);
+
+			file_name_features_vector = "activity";
+			 activity_ofstream.open(
+					(root+file_name_features_vector+sign_split
+							+select_sequence+sign_split
+							+select_tag+suffix).c_str(),ios::out);
+
+			file_name_features_vector = "features_all";
+			 features_all_ofstream.open(
+					(root+file_name_features_vector+sign_split
+							+select_sequence+sign_split
+							+select_tag+suffix).c_str(),ios::out);
+		}
 		for(size_t i = 0 ; i != record.data.size() ; ++ i){
-			features_ofstream << record.data[i]  << "\t" ;
+			features_ofstream << record.data[i] << "\t" ; ;
 		}
 		features_ofstream << endl;
 
 		//全部特征 包含sma 之类的
 		for(size_t i = 0 ; i != record.features_vector.size() ; ++ i){
-			features_all_ofstream << record.features_vector[i] << "\t" ;
+			features_all_ofstream << record.features_vector[i] << "\t" ; ;
 		}
 		features_all_ofstream << endl;
 		if(record.activity == "walking"){
@@ -89,4 +116,5 @@ int main(){
 
 
 	}while(true);
+	cout << counts << endl;
 }

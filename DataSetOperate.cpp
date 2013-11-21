@@ -62,13 +62,14 @@ DataRecord DataSetOperate::ReadRecordFromFile(){
 		return record;
 	}
 
-	//读取记录 根据文件具体形式来做
-	if( infile.eof()){
-		record.is_empty = true;
-		infile.close();
-		return record;
-	}
+
 	do{
+		//读取记录 根据文件具体形式来做
+		if( infile.eof()){
+			record.is_empty = true;
+			infile.close();
+			return record;
+		}
 		string str_record;
 		getline(infile,str_record);
 
