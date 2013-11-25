@@ -9,14 +9,14 @@
 #define READDATA_H_
 
 #include "DataRecord.h"
+#include "FeatureRecord.h"
+
 #include <vector>
 #include <queue>
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <sstream>
-
-
 
 using std::queue;
 using std::ifstream;
@@ -34,10 +34,8 @@ private:
 	//tag identifitor 的限制
 	string select_tag_identificator;
 
-
-
 	unsigned int slideWindowSize = 10;
-		//文件读取 滑动窗口
+	//文件读取 滑动窗口
 	queue<DataRecord> slideWindow;
 
 	//文件
@@ -52,15 +50,19 @@ private:
 
 	bool RestrainTagIdentificator(const DataRecord& record);
 
-
 	bool RestrainOk(const DataRecord & record);
+
 public:
+
+	static const int FALLING_COUNTS_SIGN;
 	DataRecord ReadNext();
+
+	FeatureRecord ReadNextFeatureRecord();
 
 	/*
 	 * N 表示 滑动窗口的大小
 	 */
-	DataSetOperate(char* datafilename,int N);
+	DataSetOperate(char* datafilename, int N);
 	DataSetOperate();
 	virtual ~DataSetOperate();
 
@@ -82,44 +84,44 @@ public:
 };
 
 
-inline double DataSetOperate::calculateSMV(DataRecord& record){
+inline double DataSetOperate::calculateSMV(DataRecord& record) {
 	double sum = 0;
-	for(unsigned int i=0;i!=record.data.size();++i){
-		sum+= record.data[i]*record.data[i];
+	for (unsigned int i = 0; i != record.data.size(); ++i) {
+		sum += record.data[i] * record.data[i];
 	}
-	double smv =  sqrt(sum);
+	double smv = sqrt(sum);
 	record.smv = smv;
 	return smv;
 }
 
-inline bool DataSetOperate::RestrainTagIdentificator(const DataRecord& record){
-	if(select_tag_identificator.length() <= 0){
+inline bool DataSetOperate::RestrainTagIdentificator(const DataRecord& record) {
+	if (select_tag_identificator.length() <= 0) {
 		return true;
-	}else{
-		string::size_type pos = record.tag_identificator.find(select_tag_identificator);
-		if(pos != string::npos)
+	} else {
+		string::size_type pos = record.tag_identificator.find(
+				select_tag_identificator);
+		if (pos != string::npos)
 			return true;
 		else
 			return false;
 	}
 }
 
-
-inline bool DataSetOperate::RestrainSequenceName(const DataRecord& record){
-	if(select_contain_sequence.length() <= 0){
+inline bool DataSetOperate::RestrainSequenceName(const DataRecord& record) {
+	if (select_contain_sequence.length() <= 0) {
 		return true;
-	}else{
-		string::size_type pos = record.sequence_name.find(select_contain_sequence);
-		if(pos != string::npos)
+	} else {
+		string::size_type pos = record.sequence_name.find(
+				select_contain_sequence);
+		if (pos != string::npos)
 			return true;
 		else
 			return false;
 	}
 }
 
-
-inline bool DataSetOperate::RestrainOk(const DataRecord& record){
-	return RestrainSequenceName(record)&&RestrainTagIdentificator(record);
+inline bool DataSetOperate::RestrainOk(const DataRecord& record) {
+	return RestrainSequenceName(record) && RestrainTagIdentificator(record);
 }
 
 #endif /* READDATA_H_ */

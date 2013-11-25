@@ -19,16 +19,19 @@ public:
 
 	void printRecord(){
 		std::cout<<sequence_name<<" " << tag_identificator<<" "<<timestamp<<" " << date<<" ";
-		for(int i=0;i!=features_vector.size();++i){
+		for(size_t i=0;i != features_vector.size();++i){
 			std::cout<<features_vector[i] << " ";
 		}
 
 		std::cout<<activity <<std::endl;
 	}
 
+	/**
+	 * 用作取一个记录的数据
+	 */
 	void genearateFeaturesVector(){
 		features_vector.clear();
-		for(int i=0;i != data.size(); ++i){
+		for(size_t i=0;i != data.size(); ++i){
 			features_vector.push_back(data[i]);
 		}
 		features_vector.push_back(smv);
@@ -70,6 +73,13 @@ public:
 	//分类
 	string activity;
 
+	bool IsFalling(){
+		if(activity == "falling"){
+			return true;
+		}else{
+			return false;
+		}
+	}
 };
 
 #endif /* DATARECORD_H_ */
