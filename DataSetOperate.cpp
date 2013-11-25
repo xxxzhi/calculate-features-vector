@@ -112,12 +112,24 @@ DataRecord DataSetOperate::ReadRecordFromFile() {
  */
 DataRecord DataSetOperate::ReadNext() {
 	DataRecord record_return;
+
+	//得到一个完整地滑动窗口
 	do{
 		record_return = ReadRecordFromFile();
-
 		//是否为空 表示已经到了文件尾部
 		if (record_return.is_empty) {
 			return record_return;
+		}
+
+		//跟上一次的不一样,重新来
+		if(last_sequence_name != record_return.sequence_name){
+			last_sequence_name = record_return.sequence_name;
+			if(last_sequence_name.size()!=0 ){
+
+				while(slideWindow.size() > 0)
+					slideWindow.pop();
+				continue;
+			}
 		}
 
 		//计算sma smv

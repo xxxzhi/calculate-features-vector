@@ -20,7 +20,7 @@ class SingleTraveralRandom {
 public:
 	SingleTraveralRandom(int select_nums);
 
-	bool SingleTraversal();
+	int SingleTraversal();
 
 	void Init();
 
@@ -60,16 +60,16 @@ inline void SingleTraveralRandom::Init(){
 }
 
 
-bool SingleTraveralRandom::SingleTraversal(){
+int SingleTraveralRandom::SingleTraversal(){
 	cur_index ++;
 	if(cur_index <= select_nums ){
-		return true;
+		return cur_index-1;
 	}else{
 		int random = Random(cur_index);
 		if(random <=select_nums){
-			return true;
+			return random-1;
 		}else{
-			return false;
+			return -1;
 		}
 	}
 }

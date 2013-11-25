@@ -26,31 +26,6 @@ using std::endl;
 using std::istringstream;
 
 class DataSetOperate {
-private:
-
-	//sequence name 的限制  是包含限制
-	string select_contain_sequence;
-
-	//tag identifitor 的限制
-	string select_tag_identificator;
-
-	unsigned int slideWindowSize = 10;
-	//文件读取 滑动窗口
-	queue<DataRecord> slideWindow;
-
-	//文件
-	ifstream infile;
-
-	double calculateSMV(DataRecord& record);
-	double CalculateSMA();
-
-	DataRecord ReadRecordFromFile();
-
-	bool RestrainSequenceName(const DataRecord& record);
-
-	bool RestrainTagIdentificator(const DataRecord& record);
-
-	bool RestrainOk(const DataRecord & record);
 
 public:
 
@@ -58,7 +33,6 @@ public:
 	DataRecord ReadNext();
 
 	FeatureRecord ReadNextFeatureRecord();
-
 	/*
 	 * N 表示 滑动窗口的大小
 	 */
@@ -81,6 +55,33 @@ public:
 	void SetSelectTagIdentificator(const string& selectTagIdentificator) {
 		select_tag_identificator = selectTagIdentificator;
 	}
+private:
+
+	double calculateSMV(DataRecord& record);
+	double CalculateSMA();
+
+	DataRecord ReadRecordFromFile();
+
+	bool RestrainSequenceName(const DataRecord& record);
+
+	bool RestrainTagIdentificator(const DataRecord& record);
+
+	bool RestrainOk(const DataRecord & record);
+
+	//sequence name 的限制  是包含限制
+	string select_contain_sequence;
+
+	//tag identifitor 的限制
+	string select_tag_identificator;
+
+	unsigned int slideWindowSize = 10;
+	//文件读取 滑动窗口
+	queue<DataRecord> slideWindow;
+
+	//文件
+	ifstream infile;
+
+	string last_sequence_name;
 };
 
 
